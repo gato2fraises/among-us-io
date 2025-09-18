@@ -64,7 +64,11 @@
                     </div>
                 </div>
                 
-                <button id="startBtn">Rejoindre le jeu</button>
+                <button id="startBtn" class="menu-button">🚀 Rejoindre le jeu</button>
+                <button id="mapEditorBtn" class="menu-button">🗺️ Éditeur de Cartes</button>
+                <button id="tournamentBtn" class="menu-button">🏆 Système de Tournois</button>
+                <button id="replayBtn" class="menu-button">🎬 Système de Replay</button>
+                <button id="multiplayerBtn" class="menu-button">🌐 Multijoueur</button>
                 
                 <!-- Bouton pour voir les statistiques -->
                 <button id="statsBtn" class="secondary-btn">📊 Statistiques</button>
@@ -133,6 +137,14 @@
 
         <!-- Écran de jeu principal -->
         <div id="gameScreen" class="screen hidden">
+            <!-- Canvas principal du jeu - ÉLÉMENT CRUCIAL -->
+            <canvas id="gameCanvas" width="1200" height="800" style="
+                display: block;
+                margin: 0 auto;
+                background: #2C2C2C;
+                border: 2px solid #333;
+            "></canvas>
+            
             <div id="ui">
                 <div id="playerInfo">
                     <span id="playerRole">Crewmate</span>
@@ -204,7 +216,23 @@
                     </div>
                 </div>
             </div>
-            <canvas id="gameCanvas" width="1200" height="800"></canvas>
+            <div class="game-ui">
+                <div class="player-info">
+                    <div id="playerRole">Crewmate</div>
+                    <div id="taskProgress">Tâches: 0/0</div>
+                </div>
+                
+                <div class="game-controls">
+                    <button id="emergencyBtn" class="emergency-btn">🚨 Réunion d'urgence</button>
+                    <button id="killBtn" class="kill-btn hidden">🔪 KILL</button>
+                    <button id="sabotageBtn" class="sabotage-btn hidden">🔧 SABOTAGE</button>
+                    <button id="reportBtn" class="report-btn hidden">📢 REPORT</button>
+                </div>
+                
+                <div class="task-indicator">
+                    <div id="taskPrompt" class="hidden">Appuyez sur E pour interagir</div>
+                </div>
+            </div>
             <div id="minimap">
                 <canvas id="minimapCanvas" width="200" height="133"></canvas>
             </div>
@@ -265,5 +293,42 @@
     <script src="src/tournament-system.js"></script>
     <script src="src/replay-system.js"></script>
     <script src="src/game.js"></script>
+    
+    <!-- Initialisation sécurisée du jeu -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🎮 Initialisation Among Us .io...');
+            
+            // Vérifier que tous les éléments nécessaires existent
+            const requiredElements = ['gameCanvas', 'startBtn', 'playerName', 'mapSelect'];
+            const missingElements = requiredElements.filter(id => !document.getElementById(id));
+            
+            if (missingElements.length > 0) {
+                console.error('❌ Éléments HTML manquants:', missingElements);
+                return;
+            }
+            
+            // Vérifier que toutes les classes sont disponibles
+            if (typeof AmongUsGame === 'undefined') {
+                console.error('❌ Classe AmongUsGame non définie');
+                return;
+            }
+            
+            try {
+                // Initialiser le jeu
+                window.game = new AmongUsGame();
+                console.log('✅ Jeu initialisé avec succès !');
+                
+                // Ajouter gestionnaire global d'erreurs
+                window.addEventListener('error', (e) => {
+                    console.error('🐛 Erreur JavaScript:', e.error);
+                });
+                
+            } catch (error) {
+                console.error('❌ Erreur d\'initialisation:', error);
+                alert('Erreur de chargement du jeu. Vérifiez la console (F12) pour plus de détails.');
+            }
+        });
+    </script>
 </body>
 </html>

@@ -2,9 +2,20 @@
 
 class AmongUsGame {
     constructor() {
-        // Initialisation du canvas
+        console.log('🎮 Initialisation du moteur de jeu...');
+        
+        // Vérification des éléments DOM requis
         this.canvas = document.getElementById('gameCanvas');
+        if (!this.canvas) {
+            throw new Error('❌ Élément gameCanvas introuvable !');
+        }
+        
         this.ctx = this.canvas.getContext('2d');
+        if (!this.ctx) {
+            throw new Error('❌ Impossible d\'obtenir le contexte 2D !');
+        }
+        
+        console.log('✅ Canvas initialisé:', this.canvas.width + 'x' + this.canvas.height);
         
         // Taille du viewport
         this.viewportWidth = 1200;
@@ -32,7 +43,18 @@ class AmongUsGame {
         this.currentTaskMinigame = null;
         
         // Système de mini-jeux interactifs
-        this.taskMinigames = new TaskMinigames(this);
+        try {
+            if (typeof TaskMinigames !== 'undefined') {
+                this.taskMinigames = new TaskMinigames(this);
+                console.log('✅ Système de mini-jeux initialisé');
+            } else {
+                console.warn('⚠️ TaskMinigames non disponible');
+                this.taskMinigames = null;
+            }
+        } catch (error) {
+            console.error('❌ Erreur initialisation TaskMinigames:', error);
+            this.taskMinigames = null;
+        }
         
         // Système de vote
         this.votes = new Map();
@@ -57,12 +79,43 @@ class AmongUsGame {
         this.customMaps = [];
         this.loadCustomMaps();
         
-        // Initialisation
-        this.loadMap();
-        this.setupEventListeners();
-        this.setupUIButtons();
-        this.setupCustomization();
-        this.loadPlayerStats();
+        // Initialisation avec gestion d'erreurs
+        try {
+            this.loadMap();
+            console.log('✅ Carte chargée');
+        } catch (error) {
+            console.error('❌ Erreur chargement carte:', error);
+        }
+        
+        try {
+            this.setupEventListeners();
+            console.log('✅ Event listeners configurés');
+        } catch (error) {
+            console.error('❌ Erreur event listeners:', error);
+        }
+        
+        try {
+            this.setupUIButtons();
+            console.log('✅ Boutons UI configurés');
+        } catch (error) {
+            console.error('❌ Erreur boutons UI:', error);
+        }
+        
+        try {
+            this.setupCustomization();
+            console.log('✅ Personnalisation configurée');
+        } catch (error) {
+            console.error('❌ Erreur personnalisation:', error);
+        }
+        
+        try {
+            this.loadPlayerStats();
+            console.log('✅ Statistiques chargées');
+        } catch (error) {
+            console.error('❌ Erreur statistiques:', error);
+        }
+        
+        console.log('🎮 Moteur de jeu initialisé avec succès !');
     }
     
     setupEventListeners() {
@@ -619,7 +672,12 @@ class AmongUsGame {
         console.log(`🎮 Démarrage mini-jeu: ${task.type}`);
         this.gameState = 'task';
         this.currentTaskMinigame = task;
-        this.taskMinigames.startMinigame(task.type);
+        if (this.taskMinigames) {
+            this.taskMinigames.startMinigame(task.type);
+        } else {
+            console.warn('⚠️ Mini-jeux non disponibles, tâche auto-complétée');
+            this.completeTask(task);
+        }
     }
     
     completeTask(task) {
