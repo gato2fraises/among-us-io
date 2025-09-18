@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Among Us .io - Jeu Multijoueur</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <!-- Écran de démarrage -->
+        <div id="startScreen" class="screen">
+            <h1>🚀 Among Us .io</h1>
+            <div class="menu">
+                <input type="text" id="playerName" placeholder="Entrez votre nom" maxlength="12">
+                <div class="map-selector">
+                    <label for="mapSelect">🗺️ Choix de la carte :</label>
+                    <select id="mapSelect">
+                        <option value="the_skeld">The Skeld (Classique)</option>
+                        <option value="mira_hq">Mira HQ (QG)</option>
+                        <option value="polus">Polus (Planète)</option>
+                        <option value="the_airship">The Airship (Dirigeable)</option>
+                        <option value="funkin">Funkin' (Musique)</option>
+                    </select>
+                </div>
+                
+                <!-- Système de personnalisation -->
+                <div class="customization-panel">
+                    <h3>🎨 Personnalisation</h3>
+                    <div class="customization-row">
+                        <label>Couleur:</label>
+                        <div class="color-picker">
+                            <div class="color-option" data-color="#C51111" style="background: #C51111;"></div>
+                            <div class="color-option" data-color="#132ED1" style="background: #132ED1;"></div>
+                            <div class="color-option" data-color="#117F2D" style="background: #117F2D;"></div>
+                            <div class="color-option" data-color="#ED54BA" style="background: #ED54BA;"></div>
+                            <div class="color-option" data-color="#EF7D0D" style="background: #EF7D0D;"></div>
+                            <div class="color-option" data-color="#F5F557" style="background: #F5F557;"></div>
+                            <div class="color-option" data-color="#3F474E" style="background: #3F474E;"></div>
+                            <div class="color-option" data-color="#D6E0F0" style="background: #D6E0F0;"></div>
+                            <div class="color-option" data-color="#6B2FBB" style="background: #6B2FBB;"></div>
+                            <div class="color-option" data-color="#71491E" style="background: #71491E;"></div>
+                            <div class="color-option" data-color="#38FEDC" style="background: #38FEDC;"></div>
+                            <div class="color-option selected" data-color="#50EF39" style="background: #50EF39;"></div>
+                        </div>
+                    </div>
+                    <div class="customization-row">
+                        <label>Chapeau:</label>
+                        <select id="hatSelect">
+                            <option value="none">Aucun</option>
+                            <option value="captain">🧢 Casquette</option>
+                            <option value="crown">👑 Couronne</option>
+                            <option value="chef">👨‍🍳 Toque de chef</option>
+                            <option value="police">👮 Casquette police</option>
+                            <option value="pirate">🏴‍☠️ Chapeau pirate</option>
+                            <option value="santa">🎅 Bonnet Noël</option>
+                            <option value="flower">🌸 Fleur</option>
+                            <option value="mask">🎭 Masque</option>
+                        </select>
+                    </div>
+                    <div class="player-preview">
+                        <canvas id="previewCanvas" width="60" height="80"></canvas>
+                        <span>Aperçu</span>
+                    </div>
+                </div>
+                
+                <button id="startBtn">Rejoindre le jeu</button>
+                
+                <!-- Bouton pour voir les statistiques -->
+                <button id="statsBtn" class="secondary-btn">📊 Statistiques</button>
+            </div>
+        </div>
+        
+        <!-- Écran des statistiques -->
+        <div id="statsScreen" class="screen hidden">
+            <div class="stats-container">
+                <h2>📊 Vos Statistiques</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>🎮 Parties</h3>
+                        <div class="stat-value" id="statsGamesPlayed">0</div>
+                        <div class="stat-label">Parties jouées</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>🏆 Victoires</h3>
+                        <div class="stat-value" id="statsWinRate">0%</div>
+                        <div class="stat-label">Taux de victoire</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>👨‍🚀 Crewmate</h3>
+                        <div class="stat-value" id="statsCrewmateWins">0</div>
+                        <div class="stat-label">Victoires crewmate</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>🔪 Imposteur</h3>
+                        <div class="stat-value" id="statsImpostorWins">0</div>
+                        <div class="stat-label">Victoires imposteur</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>✅ Tâches</h3>
+                        <div class="stat-value" id="statsTasksCompleted">0</div>
+                        <div class="stat-label">Tâches accomplies</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>⚡ Série</h3>
+                        <div class="stat-value" id="statsWinStreak">0</div>
+                        <div class="stat-label">Série de victoires</div>
+                    </div>
+                </div>
+                
+                <div class="achievements-section">
+                    <h3>🏆 Achievements</h3>
+                    <div id="achievementsList" class="achievements-list">
+                        <!-- Les achievements seront ajoutés ici -->
+                    </div>
+                </div>
+                
+                <div class="stats-actions">
+                    <button id="resetStatsBtn" class="danger-btn">🗑️ Réinitialiser</button>
+                    <button id="backFromStatsBtn" class="secondary-btn">← Retour</button>
+                </div>
+            </div>
+                <div class="game-info">
+                    <p>🎯 <strong>Crewmates:</strong> Accomplissez toutes les tâches pour gagner</p>
+                    <p>🔪 <strong>Imposteurs:</strong> Éliminez tous les crewmates sans être découverts</p>
+                    <br>
+                    <p>🎮 <strong>Contrôles:</strong> WASD ou flèches pour bouger</p>
+                    <p>🔧 <strong>Debug:</strong> Touche F pour activer/désactiver</p>
+                    <p>🔊 <strong>Son:</strong> Touche M pour activer/désactiver</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran de jeu principal -->
+        <div id="gameScreen" class="screen hidden">
+            <div id="ui">
+                <div id="playerInfo">
+                    <span id="playerRole">Crewmate</span>
+                    <span id="playerCount">Joueurs: 0</span>
+                    <span id="currentMap">Carte: The Skeld</span>
+                </div>
+                <div id="taskList" class="hidden">
+                    <h3>Tâches à accomplir:</h3>
+                    <ul id="tasks"></ul>
+                    <div id="taskProgress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="taskProgressBar"></div>
+                        </div>
+                        <span id="taskProgressText">0/0 tâches</span>
+                    </div>
+                </div>
+                <div id="statsPanel">
+                    <h4>📊 Statistiques</h4>
+                    <div class="stat-item">
+                        <span>🏃‍♂️ Distance: </span>
+                        <span id="statDistance">0m</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>⏱️ Temps: </span>
+                        <span id="statTime">0:00</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>✅ Tâches: </span>
+                        <span id="statTasks">0/0</span>
+                    </div>
+                </div>
+                <div id="killButton" class="hidden">
+                    <button id="killBtn" disabled>KILL</button>
+                    <div id="killCooldown"></div>
+                </div>
+                <div id="emergencyButton">
+                    <button id="emergencyBtn">🚨 RÉUNION D'URGENCE</button>
+                    <div id="emergencyCooldown"></div>
+                </div>
+                <div id="mapChangeButton" class="admin-controls">
+                    <button id="changeMapBtn">🗺️ Changer de carte</button>
+                    <select id="mapChangeSelect" class="hidden">
+                        <option value="the_skeld">The Skeld</option>
+                        <option value="mira_hq">Mira HQ</option>
+                        <option value="polus">Polus</option>
+                        <option value="the_airship">The Airship</option>
+                        <option value="funkin">Funkin'</option>
+                    </select>
+                </div>
+                <div id="sabotageButton" class="hidden">
+                    <button id="sabotageBtn">🔧 SABOTAGE</button>
+                    <div id="sabotageCooldown"></div>
+                </div>
+                
+                <!-- Interface spectateur -->
+                <div id="spectatorUI" class="hidden">
+                    <div class="spectator-header">
+                        <h3>👻 Mode Spectateur</h3>
+                        <span>Vous êtes mort - Observez les autres joueurs</span>
+                    </div>
+                    <div class="spectator-controls">
+                        <button id="spectatorPrevBtn">⬅️ Précédent</button>
+                        <span id="spectatorTarget">Player</span>
+                        <button id="spectatorNextBtn">➡️ Suivant</button>
+                        <button id="spectatorFreeBtn">🎥 Caméra libre</button>
+                    </div>
+                    <div class="spectator-info">
+                        <span>📱 Espace: Suivre joueur | F: Caméra libre</span>
+                    </div>
+                </div>
+            </div>
+            <canvas id="gameCanvas" width="1200" height="800"></canvas>
+            <div id="minimap">
+                <canvas id="minimapCanvas" width="200" height="133"></canvas>
+            </div>
+        </div>
+
+        <!-- Écran de vote -->
+        <div id="voteScreen" class="screen hidden">
+            <div id="voteContainer">
+                <h2 id="voteTitle">🗳️ Temps de vote!</h2>
+                <div id="voteTimer">Temps restant: <span id="timeLeft">60</span>s</div>
+                
+                <div id="discussionPhase" class="vote-phase">
+                    <h3>💬 Phase de discussion</h3>
+                    <p>Discutez de qui vous soupçonnez d'être l'imposteur</p>
+                    <div id="discussionTimer">Discussion: <span id="discussionTimeLeft">30</span>s</div>
+                    
+                    <!-- Chat système -->
+                    <div id="chatContainer">
+                        <div id="chatMessages"></div>
+                        <div id="chatInput">
+                            <input type="text" id="chatMessage" placeholder="Tapez votre message..." maxlength="100">
+                            <button id="sendChat">Envoyer</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="votingPhase" class="vote-phase hidden">
+                    <h3>🗳️ Phase de vote</h3>
+                    <p>Votez pour éliminer un joueur ou passez le vote</p>
+                    <div id="playerVotes"></div>
+                    <div class="vote-actions">
+                        <button id="skipVote" class="vote-btn skip-btn">Passer le vote</button>
+                    </div>
+                </div>
+                
+                <div id="voteResults" class="vote-phase hidden">
+                    <h3>📊 Résultats du vote</h3>
+                    <div id="voteResultText"></div>
+                    <button id="continueAfterVote" class="vote-btn">Continuer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran de fin de partie -->
+        <div id="endScreen" class="screen hidden">
+            <h2 id="gameResult"></h2>
+            <div id="finalStats"></div>
+            <button id="playAgainBtn">Rejouer</button>
+        </div>
+    </div>
+
+    <!-- Interface de tâche -->
+    <div id="taskUI" class="task-ui hidden"></div>
+
+    <script src="src/maps.js"></script>
+    <script src="src/task-minigames.js"></script>
+    <script src="src/map-editor.js"></script>
+    <script src="src/tournament-system.js"></script>
+    <script src="src/replay-system.js"></script>
+    <script src="src/game.js"></script>
+</body>
+</html>
